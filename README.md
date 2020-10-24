@@ -21,8 +21,8 @@ It contains these folders and files:
 | `README.md`                                                      | this getting started guide                                                                                 |
 
 ## Deploy in SAP Cloud Platform trial one time:
-* login in you trial subaccount
-* create an instance of SAP HANA Cloud DB with the option `allow all IP address` (yes after deploy, schema and tables are created during customers subscription)
+* login in your trial subaccount
+* create an instance of SAP HANA Cloud DB with the option `allow all IP address`
 * map the instance of the db to the trial organization
 * run `./npm-install-all-apps.sh`
 * run `npm run build && npm run deploy`
