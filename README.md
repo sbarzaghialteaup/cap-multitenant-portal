@@ -1,6 +1,6 @@
 # Getting Started
 
-Welcome to the template for a multitenant cap project with apps usable in SCP central portal.
+Welcome to the sample for a multitenant cap project with apps usable in SCP central portal.
 
 It contains these folders and files:
 
@@ -20,14 +20,14 @@ It contains these folders and files:
 | `package.json`                                                   | project metadata and configuration                                                                         |
 | `README.md`                                                      | this getting started guide                                                                                 |
 
-## Deploy in SAP Cloud Platform trial one time:
+## Deploy in SAP Cloud Platform trial one time
 * login in your trial subaccount
 * create an instance of SAP HANA Cloud DB with the option `allow all IP address`
 * map the instance of the db to the trial organization
 * run `./npm-install-all-apps.sh`
 * run `npm run build && npm run deploy`
 
-## For each customer:
+## For each customer
 * create a new subaccount for the customer (don't need Cloud Foundry enabled)
 * add the entitlement portal service to the customer subaccount with service plan `standard (Subscription)`
 * add the role collection `Portal_Admin` to you user
@@ -39,6 +39,6 @@ It contains these folders and files:
 * create the new portal group `Multitenant`
 * assign the app to the new group
 * create and launch a site
-* click on the tile for the fiori app `Manage Access-Rights`
+* click on the tile `Manage Access-Rights`
 * you get the error for the missing route, create the route in the `trial` space, bind to app `mtt-approuter`
 * refresh the site page
