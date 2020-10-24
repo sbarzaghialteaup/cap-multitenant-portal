@@ -27,7 +27,7 @@ It contains these folders and files:
 * login in you trial subaccount
 * run `npm run build && npm run deploy`
 * create an instance of SAP HANA Cloud DB (yes after deploy, schema and tables are created during customers subscription)
-* map the instance of the db to the subaccount
+* map the instance of the db to the subaccount trial
 
 ## For each customer:
 * create a new subaccount for the customer (don't need Cloud Foundry enabled)
