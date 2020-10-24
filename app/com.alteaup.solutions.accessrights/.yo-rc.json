@@ -1,0 +1,10 @@
+{
+  "generator-easy-ui5-extra": {
+    "namespace": "com.alteaup.solutions",
+    "appname": "accessrights",
+    "entitynameplural": "AccessRights",
+    "entitynamesingolar": "AccessRightsSing",
+    "newdir": true,
+    "namespaceURI": "com/alteaup/solutions"
+  }
+}

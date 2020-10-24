@@ -1,0 +1,36 @@
+specVersion: "1.0"
+metadata:
+  name: accessrights
+type: application
+resources:
+  configuration:
+    propertiesFileSourceEncoding: UTF-8
+builder:
+  customTasks:
+    - name: webide-extension-task-updateManifestJson
+      afterTask: generateVersionInfo
+      configuration:
+        appFolder: webapp
+        destDir: dist
+    - name: webide-extension-task-resources
+      afterTask: webide-extension-task-updateManifestJson
+      configuration:
+        nameSpace: template.namespace.cap
+    - name: webide-extension-task-copyFile
+      afterTask: webide-extension-task-resources
+      configuration:
+        srcFile: "/xs-app.json"
+        destFile: "/xs-app.json"
+    - name: webide-extension-task-lint
+      afterTask: webide-extension-task-copyFile
+      configuration:
+        destDir: dist
+        appFolder: webapp
+        nameSpace: template.namespace.cap
+    - name: "ui5-task-zipper"
+      afterTask: "generateCachebusterInfo"
+      configuration:
+        archiveName: "uimodule_accessrights"
+        debug: true
+        additionalFiles:
+          - xs-app.json

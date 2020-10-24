@@ -1,0 +1,135 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "com.alteaup.solutions.accessrights",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"CAP_Services": {
+				"uri": "/srv_api/services/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		},
+		"title": "Manage AccessRights",
+		"description": "AccessRights Maintenance",
+		"crossNavigation": {
+			"inbounds": {
+				"intent1": {
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					},
+					"semanticObject": "AccessRights",
+					"action": "manage",
+					"title": "Manage AccessRights",
+					"description": "AccessRights Mantenance",
+					"icon": "sap-icon://permission"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"fullWidth": false,
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.fiori": {
+		"registrationIds": [],
+		"archeType": "transactional"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.78.0",
+			"libs": {
+				"sap.fe.templates": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.alteaup.solutions.accessrights.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "CAP_Services",
+				"settings": {
+					"synchronizationMode": "None",
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"groupProperties": {
+						"default": {
+							"submit": "Auto"
+						}
+					}
+				}
+			}
+		},
+		"routing": {
+			"routes": [
+				{
+					"pattern": ":?query:",
+					"name": "AccessRightsList",
+					"target": "AccessRightsList"
+				},
+				{
+					"pattern": "AccessRights({key}):?query:",
+					"name": "AccessRightsSingDetails",
+					"target": "AccessRightsSingDetails"
+				}
+			],
+			"targets": {
+				"AccessRightsList": {
+					"type": "Component",
+					"id": "AccessRightsList",
+					"name": "sap.fe.templates.ListReport",
+					"options": {
+						"settings": {
+							"entitySet": "AccessRights",
+							"navigation": {
+								"AccessRights": {
+									"detail": {
+										"route": "AccessRightsSingDetails"
+									}
+								}
+							}
+						}
+					}
+				},
+				"AccessRightsSingDetails": {
+					"type": "Component",
+					"id": "AccessRightsSingDetails",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"entitySet": "AccessRights"
+						}
+					}
+				}
+			}
+		}
+	}
+}

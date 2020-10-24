@@ -1,0 +1,21 @@
+{
+  "name": "accessrights",
+  "version": "0.0.1",
+  "engines": {
+    "node": "12.X"
+  },
+  "scripts": {
+    "build": "ui5 build --clean-dest --include-task=generateManifestBundle generateCachebusterInfo"
+  },
+  "devDependencies": {
+    "@sap/ui5-builder-webide-extension": "^1.0.14",
+    "@ui5/cli": "^2.4.4",
+    "ui5-task-zipper": "^0"
+  },
+  "ui5": {
+    "dependencies": [
+      "@sap/ui5-builder-webide-extension",
+      "ui5-task-zipper"
+    ]
+  }
+}

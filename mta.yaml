@@ -1,0 +1,262 @@
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#    GLOBALS                                 #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
+ID: cap-mt
+_schema-version: 3.2.0
+description: CAP Multitenant Template
+version: 0.0.1
+parameters:
+  enable-parallel-deployments: true
+  keep-existing-routes: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - cds build --production
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#    MODULES                                 #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
+modules:
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               CAP SERVICE             ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  - name: mtt-cap-services
+    type: nodejs
+    path: gen/srv
+    parameters:
+      disk-quota: 512M
+      memory: 256M
+      buildpack: nodejs_buildpack
+    build-parameters:
+      ignore: ["default-env.json", "node_modules/"]
+      builder: custom
+      commands: []
+    properties:
+      SAP_JWT_TRUST_ACL: [{ "clientid": "*", "identityzone": "sap-provisioning" }] # Trust between server and SaaS Manager
+      EXIT: 1
+    requires:
+      - name: mtt-xsuaa
+      - name: mtt-service-manager
+      - name: mtt-saas
+      - name: mtt-application-logging
+    provides:
+      - name: mtt-cap-services-api
+        properties:
+          srv_api: ${default-url}
+      - name: mtt-cap-services-mtx-api
+        properties:
+          mtx-url: ${default-url}
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               APP ROUTER              ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  - name: mtt-approuter
+    type: nodejs
+    path: cloud-foundry/approuter
+    parameters:
+      disk-quota: 160M
+      memory: 128M
+      buildpack: nodejs_buildpack
+    properties:
+      TENANT_HOST_PATTERN: "^(.*)-${space}-${app-name}.${default-domain}"
+      SAP_JWT_TRUST_ACL: [{ "clientid": "*", "identityzone": "sap-provisioning" }]
+      SEND_XFRAMEOPTIONS: false
+    build-parameters:
+      ignore: ["default-env.json", "node_modules/"]
+      builder: custom
+      commands: []
+    requires:
+      - name: mtt-destination
+      - name: mtt-xsuaa
+      - name: mtt-html5-repo-runtime
+      - name: mtt-portal
+      - name: mtt-saas
+      - name: mtt-application-logging
+      - name: mtt-cap-services-api
+        group: destinations
+        properties:
+          name: srv_api
+          url: ~{srv_api}
+          forwardAuthToken: true
+          timeout: 60000
+    provides:
+      - name: mtt-approuter-provisioning
+        properties:
+          url: ${default-url}/provisioning
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               HTML5 APPS              ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  - name: ui_accessrights
+    type: html5
+    path: app/com.alteaup.solutions.accessrights
+    build-parameters:
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+      build-result: dist
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║            HTML5 DEPLOYER             ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  - name: mtt-html-deployer
+    type: com.sap.application.content
+    path: cloud-foundry/html5-deployer
+    requires:
+      - name: mtt-html5-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: ui_accessrights
+          artifacts:
+            - ./uimodule*.zip
+          target-path: resources/
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║            PORTAL DEPLOYER            ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  - name: mtt-portal-deployer
+    type: com.sap.application.content
+    path: cloud-foundry/portal-deployer
+    parameters:
+      config:
+        TENANT_HOST_PATTERN: "^(.*)-${space}-mtt-approuter.${default-domain}"
+    requires:
+      - name: mtt-portal
+        parameters:
+          content-target: true
+          service-key:
+            name: content-deploy-key
+            config:
+              content-endpoint: developer
+      - name: mtt-html5-repo-host
+      - name: mtt-xsuaa
+      - name: mtt-saas
+
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#     RESOURCES                              #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
+resources:
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            DESTINATIONS             │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │           SERVICE MANAGER           │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-service-manager
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: service-manager
+      service-plan: container
+    properties:
+      hdi-service-name: ${service-name}
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │                XSUAA                │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-xsuaa
+    type: org.cloudfoundry.managed-service
+    properties:
+      XSAPPNAME: ${xsuaa-app}
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: cloud-foundry/xsuaa/xs-security.json
+      xsuaa-app: ${space}-mt-app-pub
+      config:
+        xsappname: ${xsuaa-app}
+        tenant-mode: shared
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │                SAAS                 │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-saas
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: mtt-xsuaa
+      - name: mtt-cap-services-mtx-api
+      - name: mtt-approuter-provisioning
+    parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+        appName: ~{mtt-xsuaa/XSAPPNAME}
+        xsappname: ~{mtt-xsuaa/XSAPPNAME}
+        displayName: ~{mtt-xsuaa/XSAPPNAME}
+        description: |-
+          org:   ${org}
+          space: ${space}
+          XSAPPNAME: ~{mtt-xsuaa/XSAPPNAME}
+          onSubscription: ~{mtt-cap-services-mtx-api/mtx-url}/mtx/v1/provisioning/tenant/{tenantId}
+        category: "CAP Multitenant"
+        appUrls:
+          getDependencies: ~{mtt-approuter-provisioning/url}/mtx/v1/provisioning/dependencies
+          onSubscription: ~{mtt-cap-services-mtx-api/mtx-url}/mtx/v1/provisioning/tenant/{tenantId}
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            HTML5 RUNTIME            │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-html5-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │              HTML5 HOST             │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+      config:
+        sizeLimit: 1
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            PORTAL SERVICE           │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-portal
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: portal
+      service-plan: standard
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │         APPLICATION LOGGING         │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-application-logging
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite
