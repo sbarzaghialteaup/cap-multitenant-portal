@@ -42,3 +42,6 @@ It contains these folders and files:
 * click on the tile `Manage Access-Rights`
 * you get the error for the missing route, create the route in the `trial` space, bind to app `mtt-approuter`
 * refresh the site page
+
+## References and thanks
+* https://blogs.sap.com/2020/08/20/getting-your-head-into-cloud-application-programming-model-multitenancy/
