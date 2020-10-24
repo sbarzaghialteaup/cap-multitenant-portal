@@ -15,6 +15,7 @@ It contains these folders and files:
 | `cloud-foundry/html5-deployer`                                   | Folder for generated ui5 apps                                                                              |
 | `cloud-foundry/xsuaa/xs-security.json`                           | Authorization Scopes and Roles configuration                                                               |
 | `cloud-foundry/portal-deployer\portal-site\CommonDataModel.json` | Configuration of the apps availables in the portal content manager                                         |
+| `server.js`                                                      | Custom bootstrap script for overriding provisioning                                                        |
 | `npm-install-all-apps.sh`                                        | Shell script to install ui5-task-zipper in apps folders                                                    |
 | `mta.yaml`                                                       | MTA yaml configuration for the whole project                                                               |
 | `package.json`                                                   | project metadata and configuration                                                                         |
