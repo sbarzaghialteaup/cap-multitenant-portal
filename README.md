@@ -4,23 +4,22 @@ Welcome to the template for a multitenant cap project with apps usable in SCP ce
 
 It contains these folders and files:
 
-| File / Folder                                                    | Purpose                                                            |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `db/schema.cds`                                                  | domain model with the single entity `AccessRights`                 |
-| `srv/`                                                           | service models                                                     |
-| `srv/saas-provisioning/provisioning.js`                          | service called during customer subaccount subscription,            |
-|                                                                  | create the schema and return the url of the portal                 |
-| `app/com.alteaup.solutions.accessrights/`                        | Fiori Elements very simple app for the `AccessRights` entity       |
-| `app/index.cds`                                                  | Index of all the UI related cds annotations                        |
-| `cloud-foundry/`                                                 | Cloud Foundry related objects, services, and configuration         |
-| `cloud-foundry/approuter/xs-apps.json`                           | Configuration of the App Router routes                             |
-| `cloud-foundry/html5-deployer`                                   | Folder for generated ui5 apps                                      |
-| `cloud-foundry/xsuaa/xs-security.json`                           | Authorization Scopes and Roles configuration                       |
-| `cloud-foundry/portal-deployer\portal-site\CommonDataModel.json` | Configuration of the apps availables in the portal content manager |
-| `npm-install-all-apps.sh`                                        | Shell script to install ui5-task-zipper in apps folders            |
-| `mta.yaml`                                                       | MTA yaml configuration for the whole project                       |
-| `package.json`                                                   | project metadata and configuration                                 |
-| `README.md`                                                      | this getting started guide                                         |
+| File / Folder                                                    | Purpose                                                                                                    |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `db/schema.cds`                                                  | domain model with the single entity `AccessRights`                                                         |
+| `srv/`                                                           | service models                                                                                             |
+| `srv/saas-provisioning/provisioning.js`                          | service called during customer subaccount subscription, create the schema and return the url of the portal |
+| `app/com.alteaup.solutions.accessrights/`                        | Fiori Elements very simple app for the `AccessRights` entity                                               |
+| `app/index.cds`                                                  | Index of all the UI related cds annotations                                                                |
+| `cloud-foundry/`                                                 | Cloud Foundry related objects, services, and configuration                                                 |
+| `cloud-foundry/approuter/xs-apps.json`                           | Configuration of the App Router routes                                                                     |
+| `cloud-foundry/html5-deployer`                                   | Folder for generated ui5 apps                                                                              |
+| `cloud-foundry/xsuaa/xs-security.json`                           | Authorization Scopes and Roles configuration                                                               |
+| `cloud-foundry/portal-deployer\portal-site\CommonDataModel.json` | Configuration of the apps availables in the portal content manager                                         |
+| `npm-install-all-apps.sh`                                        | Shell script to install ui5-task-zipper in apps folders                                                    |
+| `mta.yaml`                                                       | MTA yaml configuration for the whole project                                                               |
+| `package.json`                                                   | project metadata and configuration                                                                         |
+| `README.md`                                                      | this getting started guide                                                                                 |
 
 ## Deploy in SAP Cloud Platform trial one time:
 * run `./npm-install-all-apps.sh`
