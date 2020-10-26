@@ -1,82 +1,105 @@
 {
-	"name": "cap-template",
-	"version": "1.0.0",
-	"description": "A simple CAP project multitenant with portal, created from sbarzaghi template",
-	"repository": "<Add your repository here>",
-	"license": "UNLICENSED",
-	"private": true,
-	"dependencies": {
-		"@sap/audit-logging": "^3",
-		"@sap/cds": "^4",
-		"@sap/hana-client": "^2",
-		"@sap/xsenv": "^3",
-		"@sap/xssec": "^2.1.16",
-		"@sap/cds-mtx": "^1",
-		"@sap/hdi-deploy": "^3.11.4",
-		"@sap/instance-manager": "^2",
-		"express": "^4",
-		"passport": "^0",
-		"request": "^2"
-	},
-	"devDependencies": {
-		"sqlite3": "^5"
-	},
-	"engines": {
-		"node": "12.18.3",
-		"npm": "6.14.6"
-	},
-	"scripts": {
-		"start": "cds run",
-		"build": "mbt build",
-		"deploy": "echo 'Starting deploy...'; date; cf deploy mta_archives/cap-mt_0.0.1.mtar -f; echo 'deploy finished'; date"
-	},
-	"cds": {
-		"hana": {
-			"deploy-format": "hdbtable"
-		},
-		"requires": {
-			"uaa": {
-				"kind": "xsuaa"
-			},
-			"db": {
-				"kind": "sql",
-				"multiTenant": true,
-				"vcap": {
-					"label": "service-manager"
-				}
-			}
-		},
-		"build": {
-			"target": "gen",
-			"tasks": [
-				{
-					"src": "db",
-					"for": "hana",
-					"options": {
-						"model": [
-							"db",
-							"srv",
-							"app"
-						]
-					}
-				},
-				{
-					"src": "srv",
-					"for": "node-cf",
-					"options": {
-						"model": [
-							"db",
-							"srv",
-							"app"
-						]
-					}
-				},
-				{
-					"src": ".",
-					"for": "mtx",
-					"dest": "srv"
-				}
-			]
-		}
-	}
+  "name": "cap-template",
+  "version": "1.0.0",
+  "description": "A simple CAP project multitenant with portal, created from sbarzaghi template",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/audit-logging": "^3",
+    "@sap/cds": "^4",
+    "@sap/hana-client": "^2",
+    "@sap/xsenv": "^3",
+    "@sap/xssec": "^2.1.16",
+    "@sap/cds-mtx": "^1",
+    "@sap/hdi-deploy": "^3.11.4",
+    "@sap/instance-manager": "^2",
+    "express": "^4",
+    "passport": "^0",
+    "request": "^2"
+  },
+  "devDependencies": {
+    "sqlite3": "^5"
+  },
+  "engines": {
+    "node": "12.18.3",
+    "npm": "6.14.6"
+  },
+  "scripts": {
+    "start": "cds run",
+    "build": "mbt build",
+    "deploy": "echo 'Starting deploy...'; date; cf deploy mta_archives/cap-mt_0.0.1.mtar -f; echo 'deploy finished'; date"
+  },
+  "cds": {
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
+    "requires": {
+      "uaa": {
+        "kind": "xsuaa"
+      },
+      "db": {
+        "kind": "sql",
+        "multiTenant": true,
+        "vcap": {
+          "label": "service-manager"
+        }
+      },
+      "Northwind": {
+        "kind": "odata",
+        "model": "srv/external/Northwind",
+        "credentials": {
+          "destination": "Northwind",
+          "requestTimeout": 30000
+        },
+        "pool": {
+          "min": 1,
+          "max": 10
+        }
+      }
+    },
+    "[development]": {
+      "requires": {
+        "db": {
+          "kind": "sqlite",
+          "multiTenant": true,
+          "credentials": {
+            "database": "sqlite.db"
+          }
+        }
+      }
+    },
+    "build": {
+      "target": "gen",
+      "tasks": [
+        {
+          "src": "db",
+          "for": "hana",
+          "options": {
+            "model": [
+              "db",
+              "srv",
+              "app"
+            ]
+          }
+        },
+        {
+          "src": "srv",
+          "for": "node-cf",
+          "options": {
+            "model": [
+              "db",
+              "srv",
+              "app"
+            ]
+          }
+        },
+        {
+          "src": ".",
+          "for": "mtx",
+          "dest": "srv"
+        }
+      ]
+    }
+  }
 }
