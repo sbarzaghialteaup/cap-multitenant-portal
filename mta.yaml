@@ -187,7 +187,7 @@ resources:
       service: xsuaa
       service-plan: application
       path: cloud-foundry/xsuaa/xs-security.json
-      xsuaa-app: ${space}-mt-app-pub
+      xsuaa-app: ${org}-${space}-mt-app-pub
       config:
         xsappname: ${xsuaa-app}
         tenant-mode: shared
