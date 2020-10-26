@@ -46,3 +46,6 @@ It contains these folders and files:
 
 ## References and thanks
 * https://blogs.sap.com/2020/08/20/getting-your-head-into-cloud-application-programming-model-multitenancy/
+
+## Note
+* saas AppName must be unique in Cloud Foundry?
