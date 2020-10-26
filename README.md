@@ -31,8 +31,8 @@ It contains these folders and files:
 ## For each customer
 * create a new subaccount for the customer (don't need Cloud Foundry enabled)
 * add the entitlement portal service to the customer subaccount with service plan `standard (Subscription)`
-* add the role collection `Portal_Admin` to you user
 * subscribe the subaccount of the customer to the portal
+* add the role collection `Portal_Admin` to you user
 * subscribe the subaccount of the customer to the app `dev-mt-app-pub`
 * launch the portal service with the *Go to Application* link
 * in the content explorer there is the app `Manage Access-Rights`, add it to `My Content`
