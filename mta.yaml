@@ -30,7 +30,7 @@ modules:
     type: nodejs
     path: gen/srv
     parameters:
-      disk-quota: 512M
+      disk-quota: 1024M
       memory: 256M
       buildpack: nodejs_buildpack
     build-parameters:
@@ -41,6 +41,8 @@ modules:
       SAP_JWT_TRUST_ACL: [{ "clientid": "*", "identityzone": "sap-provisioning" }] # Trust between server and SaaS Manager
       EXIT: 1
     requires:
+      - name: mtt-destination
+      - name: mtt-connectivity
       - name: mtt-xsuaa
       - name: mtt-service-manager
       - name: mtt-saas
@@ -61,7 +63,7 @@ modules:
     type: nodejs
     path: cloud-foundry/approuter
     parameters:
-      disk-quota: 160M
+      disk-quota: 256M
       memory: 128M
       buildpack: nodejs_buildpack
     properties:
@@ -154,6 +156,16 @@ modules:
 resources:
   #
   #   ┌─────────────────────────────────────┐   #
+  #   │            CONNECTIVITY             │   #
+  #   └─────────────────────────────────────┘   #
+  #
+  - name: mtt-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
+  #
+  #   ┌─────────────────────────────────────┐   #
   #   │            DESTINATIONS             │   #
   #   └─────────────────────────────────────┘   #
   #
@@ -206,9 +218,9 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        appName: ~{mtt-xsuaa/XSAPPNAME}
+        appName: mtt-cap-${org}-${space}
         xsappname: ~{mtt-xsuaa/XSAPPNAME}
-        displayName: ~{mtt-xsuaa/XSAPPNAME}
+        displayName: mtt-cap-${org}-${space}
         description: |-
           org:   ${org}
           space: ${space}
