@@ -30,7 +30,7 @@ modules:
     type: nodejs
     path: gen/srv
     parameters:
-      disk-quota: 512M
+      disk-quota: 1024M
       memory: 256M
       buildpack: nodejs_buildpack
     build-parameters:
@@ -63,7 +63,7 @@ modules:
     type: nodejs
     path: cloud-foundry/approuter
     parameters:
-      disk-quota: 160M
+      disk-quota: 256M
       memory: 128M
       buildpack: nodejs_buildpack
     properties:
@@ -218,9 +218,9 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        appName: ~{mtt-xsuaa/XSAPPNAME}
+        appName: mtt-cap-${org}-${space}
         xsappname: ~{mtt-xsuaa/XSAPPNAME}
-        displayName: ~{mtt-xsuaa/XSAPPNAME}
+        displayName: mtt-cap-${org}-${space}
         description: |-
           org:   ${org}
           space: ${space}
